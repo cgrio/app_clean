@@ -1,6 +1,7 @@
 import 'package:app_clean/apresentacao/blocs/artigos_remoto/artigos_remoto_bloc.dart';
 import 'package:app_clean/apresentacao/widgets/artigo_widget.dart';
 import 'package:app_clean/dominio/entidades/artigo_entidade.dart';
+import 'package:app_clean/nucleo/bloc/bloc_with_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,13 +13,13 @@ class BreakingNewsView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scrollController = useScrollController();
+    final ScrollController scrollController = useScrollController();
 
     useEffect(() {
       scrollController
           .addListener(() => _onScrollListener(context, scrollController));
       return scrollController.dispose;
-    }, [scrollController]);
+    }, <ScrollController>[scrollController]);
 
     return Scaffold(
       appBar: _buildAppBar(),
@@ -31,7 +32,7 @@ class BreakingNewsView extends HookWidget {
       title: const Text('Daily News', style: TextStyle(color: Colors.black)),
       actions: [
         Builder(
-          builder: (context) => GestureDetector(
+          builder: (BuildContext context) => GestureDetector(
             onTap: () => _onShowSavedArticlesViewTapped(context),
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 14),
@@ -46,7 +47,7 @@ class BreakingNewsView extends HookWidget {
   Widget _buildBody(ScrollController scrollController) {
     // return _buildArticle(scrollController);
     return BlocBuilder<ArtigosRemotoBloc, ArtigosRemotoState>(
-      builder: (_, state) {
+      builder: (_, ArtigosRemotoState state) {
         if (state is ArtigosRemotoCarregando) {
           return const Center(child: CupertinoActivityIndicator());
         }
@@ -54,10 +55,10 @@ class BreakingNewsView extends HookWidget {
           return const Center(child: Icon(Ionicons.refresh));
         }
         if (state is ArtigosRemotoDone) {
-          return _buildArticle(scrollController, state.artigos ?? [],
-              state.semMaisDados ?? true);
+          return _buildArticle(scrollController,
+              state.artigos ?? <ArtigoEntidade?>[], state.semMaisDados ?? true);
         }
-        return const SizedBox();
+        return const SizedBox(height: 10);
       },
     );
   }
@@ -69,15 +70,16 @@ class BreakingNewsView extends HookWidget {
   ) {
     return ListView(
       controller: scrollController,
-      children: [
+      children: <Widget>[
         // Items
         ...List<Widget>.from(
           articles.map(
-            (e) => Builder(
-              builder: (context) => ArtigoWidget(
+            (ArtigoEntidade? e) => Builder(
+              builder: (BuildContext context) => ArtigoWidget(
                 key: UniqueKey(),
                 artigo: e,
-                onArticlePressed: (e) => _onArticlePressed(context, e),
+                onArticlePressed: (ArtigoEntidade? e) =>
+                    _onArticlePressed(context, e!),
               ),
             ),
           ),
@@ -99,17 +101,18 @@ class BreakingNewsView extends HookWidget {
 
   void _onScrollListener(
       BuildContext context, ScrollController scrollController) {
-    final maxScroll = scrollController.position.maxScrollExtent;
-    final currentScroll = scrollController.position.pixels;
-    final remoteArticleBloc = BlocProvider.of<RemoteArticlesBloc>(context);
-    final state = remoteArticleBloc.blocProcessState;
+    final double maxScroll = scrollController.position.maxScrollExtent;
+    final double currentScroll = scrollController.position.pixels;
+    final ArtigosRemotoBloc remoteArticleBloc =
+        BlocProvider.of<ArtigosRemotoBloc>(context);
+    final BlocProcessState state = remoteArticleBloc.blocProcessState;
 
     if (currentScroll == maxScroll && state == BlocProcessState.idle) {
-      remoteArticleBloc.add(const GetArticles());
+      remoteArticleBloc.add(const GetArtigos());
     }
   }
 
-  void _onArticlePressed(BuildContext context, Article article) {
+  void _onArticlePressed(BuildContext context, ArtigoEntidade article) {
     Navigator.pushNamed(context, '/ArticleDetailsView', arguments: article);
   }
 

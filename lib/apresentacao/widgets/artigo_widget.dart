@@ -4,14 +4,14 @@ import 'package:ionicons/ionicons.dart';
 
 class ArtigoWidget extends StatelessWidget {
   final ArtigoEntidade? artigo;
-  final bool isRemovable;
-  final void Function(ArtigoEntidade artigo) onRemove;
-  final void Function(ArtigoEntidade artigo) onArticlePressed;
+  final bool? isRemovable;
+  final void Function(ArtigoEntidade? artigo)? onRemove;
+  final void Function(ArtigoEntidade? artigo)? onArticlePressed;
 
   const ArtigoWidget(
-      {required Key key,
+      {Key? key,
       this.artigo,
-      this.onArticlePressed,
+      required this.onArticlePressed,
       this.isRemovable = false,
       this.onRemove})
       : super(key: key);
@@ -48,7 +48,7 @@ class ArtigoWidget extends StatelessWidget {
             color: Colors.black.withOpacity(0.08),
           ),
           child: Image.network(
-            artigo.urlToImage ?? '',
+            artigo?.urlToImage ?? '',
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) {
               return const Center(
@@ -74,7 +74,7 @@ class ArtigoWidget extends StatelessWidget {
           children: [
             // Title
             Text(
-              artigo.title ?? '',
+              artigo?.title ?? '',
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -90,7 +90,7 @@ class ArtigoWidget extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  artigo.description ?? '',
+                  artigo?.description ?? '',
                   maxLines: 2,
                 ),
               ),
@@ -102,7 +102,7 @@ class ArtigoWidget extends StatelessWidget {
                 const Icon(Ionicons.time_outline, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  artigo.publishedAt ?? "",
+                  artigo?.publishedAt ?? "",
                   style: const TextStyle(
                     fontSize: 12,
                   ),
@@ -116,7 +116,7 @@ class ArtigoWidget extends StatelessWidget {
   }
 
   Widget _buildRemovableArea() {
-    if (isRemovable) {
+    if (isRemovable!) {
       return GestureDetector(
         onTap: _onRemove,
         child: const Padding(
@@ -130,13 +130,13 @@ class ArtigoWidget extends StatelessWidget {
 
   void _onTap() {
     if (onArticlePressed != null) {
-      onArticlePressed(artigo);
+      onArticlePressed!(artigo!);
     }
   }
 
   void _onRemove() {
     if (onRemove != null) {
-      onRemove(artigo);
+      onRemove!(artigo!);
     }
   }
 }
