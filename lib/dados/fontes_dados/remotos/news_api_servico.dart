@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app_clean/dados/modelos/breaking_news_response_modelo.dart';
 import 'package:app_clean/nucleo/utilidades/constantes.dart';
 import 'package:retrofit/http.dart';

@@ -45,7 +45,7 @@ class ArtigoWidget extends StatelessWidget {
           width: MediaQuery.of(context).size.width / 3,
           height: double.maxFinite,
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black,
           ),
           child: Image.network(
             artigo?.urlToImage ?? '',
@@ -78,10 +78,10 @@ class ArtigoWidget extends StatelessWidget {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontFamily: 'Butler',
+                // fontFamily: 'Butler',
                 fontWeight: FontWeight.w900,
                 fontSize: 18,
-                color: Colors.black87,
+                color: Colors.black,
               ),
             ),
 
